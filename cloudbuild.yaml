@@ -1,0 +1,20 @@
+steps:
+# Paso 1: Construye la imagen Docker
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/$PROJECT_ID/holamundo:$COMMIT_SHA', '.']
+# Paso 2: Empuja la imagen al Container Registry
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/$PROJECT_ID/holamundo:$COMMIT_SHA']
+# Paso 3: Despliega la imagen en Cloud Run
+- name: 'gcr.io/cloud-builders/gcloud'
+  args:
+  - 'run'
+  - 'deploy'
+  - 'holamundo'
+  - '--image'
+  - 'gcr.io/$PROJECT_ID/holamundo:$COMMIT_SHA'
+  - '--region'
+  - 'us-central1'
+  - '--allow-unauthenticated'
+images:
+- 'gcr.io/$PROJECT_ID/holamundo:$COMMIT_SHA'
